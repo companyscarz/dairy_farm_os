@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block title %}{{ code }} · FarmOS{% endblock %}{% block auth_content %}<div class="auth-page"><div class="auth-card"><div class="auth-logo">!</div><h1>{{ code }}</h1><p>{{ message }}</p><a class="btn primary wide" href="{{ url_for('dashboard.dashboard') if current_user else url_for('auth.login') }}">Continue</a></div></div>{% endblock %}
