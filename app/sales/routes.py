@@ -1,7 +1,7 @@
 import math
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..auth import login_required, get_current_user
+from ..auth import login_required, roles_required, get_current_user
 from ..database import fetch_all, execute
 
 bp = Blueprint("sales", __name__, url_prefix="/sales")
@@ -43,3 +43,12 @@ def create():
         except Exception:
             flash("Could not save the sale. Check the values.", "error")
     return render_template("sales/form.html", active="sales")
+
+@bp.post("/<int:record_id>/delete")
+@roles_required("owner", "manager")
+def delete(record_id):
+    farm_id = get_current_user()["farm_id"]
+    execute("DELETE FROM sales WHERE id=%s AND farm_id=%s", (record_id, farm_id))
+    flash("Sale record deleted.", "success")
+    return redirect(url_for("sales.index"))
+
