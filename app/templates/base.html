@@ -7,7 +7,7 @@
   <meta name="description" content="Intercity Dairy Farm management system">
   <link rel="manifest" href="{{ url_for('manifest') }}">
   <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='icons/icon.jfif') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=2">
   {% if current_user %}<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js" defer></script>{% endif %}
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
 </head>
@@ -25,7 +25,7 @@
       <div class="sidebar-bottom"><div class="farm-mini">{{ current_user.farm_name }}</div><div class="user-mini">{{ current_user.name }} · {{ current_user.role|title }}</div></div>
     </aside>
     <div class="main-shell">
-      <header class="topbar"><button class="menu-btn" type="button" onclick="toggleSidebar()">☰</button><div class="topbar-title">{{ current_user.farm_name }}</div><div class="topbar-actions"><a href="{{ url_for('settings.settings_page') }}">⚙</a><form method="post" action="{{ url_for('auth.logout') }}" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="icon-btn" title="Log out">↪</button></form></div></header>
+      <header class="topbar"><button class="menu-btn" type="button" onclick="toggleSidebar()">☰</button><div class="topbar-title">{{ current_user.farm_name }}</div><div class="topbar-actions"><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" title="Toggle dark theme">🌙</button><a href="{{ url_for('settings.settings_page') }}" aria-label="Settings" title="Settings">⚙</a><form method="post" action="{{ url_for('auth.logout') }}" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="icon-btn" title="Log out">↪</button></form></div></header>
       <main class="content">
         {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
         {% block content %}{% endblock %}
@@ -37,5 +37,6 @@
   {% block auth_content %}{% endblock %}
 {% endif %}
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<div class="install-prompt" id="installPrompt" role="dialog" aria-labelledby="installPromptTitle" aria-describedby="installPromptText" hidden><button type="button" class="install-close" id="installDismiss" aria-label="Dismiss install suggestion">×</button><div class="install-prompt-icon">📲</div><div class="install-prompt-copy"><strong id="installPromptTitle">Install Intercity Dairy Farm</strong><p id="installPromptText">Add the farm app to your home screen for quicker access.</p><small id="installPromptHelp" hidden></small></div><button type="button" class="btn primary install-action" id="installAction">Install app</button></div>
 </body>
 </html>
