@@ -39,3 +39,12 @@ def test_login_redirect_rejects_external_and_protocol_relative_urls():
         assert _safe_next_url("https://evil.example") == "/"
         assert _safe_next_url("//evil.example/path") == "/"
         assert _safe_next_url("/\\\\evil.example") == "/"
+
+
+def test_csv_export_sanitizes_spreadsheet_formulas():
+    from app.reports.routes import _safe_csv_cell
+
+    assert _safe_csv_cell("=HYPERLINK(\"https://example.com\")").startswith("'=")
+    assert _safe_csv_cell("@SUM(A1:A2)") == "'@SUM(A1:A2)"
+    assert _safe_csv_cell("Normal farm record") == "Normal farm record"
+    assert _safe_csv_cell(-12.5) == -12.5
