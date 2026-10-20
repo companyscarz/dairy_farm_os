@@ -1,1 +1,49 @@
-{% extends 'base.html' %}{% block title %}Reports · Intercity Dairy Farm{% endblock %}{% block content %}<div class="page-head"><div><h1>Reports & analytics</h1><p>Turn farm records into useful management information.</p></div></div><div class="metrics"><div class="metric"><span>Revenue</span><strong>UGX {{ '{:,.0f}'.format(data.revenue) }}</strong><small>Last 30 days</small></div><div class="metric"><span>Expenses</span><strong>UGX {{ '{:,.0f}'.format(data.expenses) }}</strong><small>Last 30 days</small></div><div class="metric"><span>Net</span><strong>UGX {{ '{:,.0f}'.format(data.profit) }}</strong><small>Revenue minus expenses</small></div></div><section class="panel"><div class="panel-head"><div><h2>Milk output</h2><p>Last 30 days</p></div></div><div id="reportChart" class="chart tall"></div></section><script>window.addEventListener('load',()=>{const c=echarts.init(document.getElementById('reportChart'));const d={{ data.chart|tojson }};c.setOption({tooltip:{trigger:'axis'},xAxis:{type:'category',data:d.labels},yAxis:{type:'value',name:'Litres'},series:[{type:'bar',data:d.values,barMaxWidth:28}]});window.addEventListener('resize',()=>c.resize())});</script>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Reports · Intercity Dairy Farm{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Reports & analytics</h1>
+    <p>Turn farm records into useful management information.</p>
+  </div>
+</div>
+{% if current_user.role == 'owner' %}
+<section class="panel backup-panel">
+  <div class="panel-head">
+    <div>
+      <h2>Farm data backups</h2>
+      <p>Download CSV copies of your farm records. Only the farm administrator can access these exports.</p>
+    </div>
+    <span class="backup-lock" aria-hidden="true">🔒</span>
+  </div>
+  <div class="backup-grid">
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='animals') }}">⬇ Animals CSV</a>
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='milk') }}">⬇ Milk production CSV</a>
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='inventory') }}">⬇ Inventory CSV</a>
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='sales') }}">⬇ Sales CSV</a>
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='expenses') }}">⬇ Expenses CSV</a>
+    <a class="btn" href="{{ url_for('reports.export_csv', dataset='workers') }}">⬇ Farm users CSV</a>
+  </div>
+  <p class="backup-note">Keep downloaded files somewhere private and secure. CSV files contain records, not uploaded animal image files or a restorable database snapshot.</p>
+</section>
+{% endif %}
+<div class="metrics">
+  <div class="metric"><span>Revenue</span><strong>UGX {{ '{:,.0f}'.format(data.revenue) }}</strong><small>Last 30 days</small></div>
+  <div class="metric"><span>Expenses</span><strong>UGX {{ '{:,.0f}'.format(data.expenses) }}</strong><small>Last 30 days</small></div>
+  <div class="metric"><span>Net</span><strong>UGX {{ '{:,.0f}'.format(data.profit) }}</strong><small>Revenue minus expenses</small></div>
+</div>
+<section class="panel">
+  <div class="panel-head"><div><h2>Milk output</h2><p>Last 30 days</p></div></div>
+  <div id="reportChart" class="chart tall"></div>
+</section>
+<script>
+window.addEventListener('load',()=>{
+  const chartElement=document.getElementById('reportChart');
+  if(!chartElement || !window.echarts) return;
+  const c=echarts.init(chartElement);
+  const d={{ data.chart|tojson }};
+  c.setOption({tooltip:{trigger:'axis'},xAxis:{type:'category',data:d.labels},yAxis:{type:'value',name:'Litres'},series:[{type:'bar',data:d.values,barMaxWidth:28}]});
+  window.addEventListener('resize',()=>c.resize());
+});
+</script>
+{% endblock %}
