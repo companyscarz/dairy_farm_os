@@ -1,9 +1,10 @@
-const CACHE = 'intercity-dairy-static-v4';
+const CACHE = 'intercity-dairy-static-v5';
 const SHELL = [
   '/manifest.json',
   '/static/css/app.css',
   '/static/js/app.js',
-  '/static/icons/icon.svg'
+  '/static/icons/icon.jfif',
+  '/static/icons/intercity-dairy-farm.jfif'
 ];
 
 self.addEventListener('install', (event) => {
