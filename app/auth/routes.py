@@ -4,6 +4,13 @@ from ..auth import authenticate, login_user, logout_user, get_current_user, firs
 bp = Blueprint("auth", __name__)
 
 
+def _safe_next_url(value):
+    """Only allow local absolute paths; prevent external redirect phishing."""
+    if value and value.startswith("/") and not value.startswith("//") and "\\" not in value:
+        return value
+    return url_for("dashboard.dashboard")
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if get_current_user():
@@ -14,7 +21,7 @@ def login():
             flash("Invalid email or password.", "error")
         else:
             login_user(user)
-            return redirect(request.args.get("next") or url_for("dashboard.dashboard"))
+            return redirect(_safe_next_url(request.args.get("next", "")))
     return render_template("auth/login.html")
 
 
@@ -41,7 +48,7 @@ def setup():
                 login_user(user)
                 flash("Administrator account created. Welcome to Intercity Dairy Farm.", "success")
                 return redirect(url_for("settings.settings_page"))
-            except Exception as exc:
+            except Exception:
                 flash("Could not create the administrator. Check the details and try again.", "error")
     return render_template("auth/setup.html")
 
