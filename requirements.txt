@@ -3,3 +3,5 @@ psycopg[binary,pool]
 python-dotenv
 Gunicorn
 pytest
+boto3
+Pillow
