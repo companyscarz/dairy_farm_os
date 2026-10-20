@@ -36,8 +36,8 @@
   {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="flash floating {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
   {% block auth_content %}{% endblock %}
 {% endif %}
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% if not current_user %}<button class="theme-toggle guest-theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" title="Toggle dark theme">🌙</button>{% endif %}
 <div class="install-prompt" id="installPrompt" role="dialog" aria-labelledby="installPromptTitle" aria-describedby="installPromptText" hidden><button type="button" class="install-close" id="installDismiss" aria-label="Dismiss install suggestion">×</button><div class="install-prompt-icon">📲</div><div class="install-prompt-copy"><strong id="installPromptTitle">Install Intercity Dairy Farm</strong><p id="installPromptText">Add the farm app to your home screen for quicker access.</p><small id="installPromptHelp" hidden></small></div><button type="button" class="btn primary install-action" id="installAction">Install app</button></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
