@@ -73,7 +73,11 @@ def create_app():
     from .expenses.routes import bp as expenses_bp
     from .reports.routes import bp as reports_bp
     from .settings.routes import bp as settings_bp
+<<<<<<< HEAD
     from .crops.routes import bp as crops_bp
+=======
+    from .workers.routes import bp as workers_bp
+>>>>>>> 1c174ce8dd3bd45f1ee03ccaaea6c57fe2fda01a
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -84,7 +88,11 @@ def create_app():
     app.register_blueprint(expenses_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(settings_bp)
+<<<<<<< HEAD
     app.register_blueprint(crops_bp)
+=======
+    app.register_blueprint(workers_bp)
+>>>>>>> 1c174ce8dd3bd45f1ee03ccaaea6c57fe2fda01a
 
     @app.get("/healthz")
     def healthz():

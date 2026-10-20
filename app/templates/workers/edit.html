@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}Edit worker · Intercity Dairy Farm{% endblock %}{% block content %}
+<div class="page-head"><div><h1>Edit worker</h1><p>Update the staff member's account, access and password.</p></div></div>
+<section class="panel form-panel"><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="form-grid">
+<label>Full name *<input name="name" value="{{ request.form.get('name', worker.name) }}" required maxlength="120"></label>
+<label>Email address *<input type="email" name="email" value="{{ request.form.get('email', worker.email) }}" required maxlength="200"></label>
+<label>New password <input type="password" name="password" minlength="10" autocomplete="new-password"><small>Leave blank to keep the current password. If changing it, use at least 10 characters.</small></label>
+<label>Account status<select name="active"><option value="true" {{ 'selected' if worker.active }}>Active</option><option value="false" {{ 'selected' if not worker.active }}>Disabled</option></select></label>
+</div><div class="form-actions"><a class="btn" href="{{ url_for('workers.index') }}">Cancel</a><button class="btn primary" type="submit">Save worker</button></div></form></section>{% endblock %}

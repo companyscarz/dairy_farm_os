@@ -7,8 +7,13 @@ load_dotenv()
 
 @dataclass(frozen=True)
 class Settings:
+<<<<<<< HEAD
     app_name: str = os.getenv("APP_NAME", "FarmOS")
     database_url: str = os.getenv("DATABASE_URL", "postgresql://farmos:farmos@localhost:5432/farmos")
+=======
+    app_name: str = os.getenv("APP_NAME", "Intercity Dairy Farm")
+    database_url: str = os.getenv("DATABASE_URL", "")
+>>>>>>> 1c174ce8dd3bd45f1ee03ccaaea6c57fe2fda01a
     secret_key: str = os.getenv("SECRET_KEY", "")
     host: str = os.getenv("HOST", "0.0.0.0")
     port: int = int(os.getenv("PORT", "7070"))
@@ -22,7 +27,11 @@ class Settings:
             if not self.debug:
                 raise RuntimeError("SECRET_KEY must be configured in production.")
         if not self.database_url.startswith(("postgresql://", "postgres://")):
-            raise RuntimeError("This application requires PostgreSQL via DATABASE_URL.")
+            raise RuntimeError("DATABASE_URL must be set to a PostgreSQL connection URL.")
+        if self.db_min_size < 0 or self.db_max_size < 1 or self.db_min_size > self.db_max_size:
+            raise RuntimeError("DB_MIN_SIZE and DB_MAX_SIZE must define a valid connection-pool range.")
+        if not 1 <= self.port <= 65535:
+            raise RuntimeError("PORT must be between 1 and 65535.")
 
 
 settings = Settings()

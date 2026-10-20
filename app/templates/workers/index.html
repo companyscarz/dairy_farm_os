@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block title %}Workers · Intercity Dairy Farm{% endblock %}{% block content %}
+<div class="page-head"><div><h1>Workers</h1><p>Register and manage staff accounts for this farm.</p></div></div>
+<div class="two-col">
+<section class="panel form-panel"><div class="panel-head"><div><h2>Register a worker</h2><p>New accounts start with the worker role.</p></div></div>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="form-grid">
+<label>Full name *<input name="name" autocomplete="name" required maxlength="120"></label>
+<label>Email address *<input name="email" type="email" autocomplete="email" required maxlength="200"></label>
+<label>Temporary password *<input name="password" type="password" minlength="10" autocomplete="new-password" required></label>
+</div><div class="form-actions"><button class="btn primary" type="submit">Create worker account</button></div></form></section>
+<section class="panel"><div class="panel-head"><div><h2>Staff accounts</h2><p>Only workers belonging to this farm are listed.</p></div></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th></th></tr></thead><tbody>{% for w in workers %}<tr><td>{{ w.name }}</td><td>{{ w.email }}</td><td><span class="badge {{ 'success' if w.active else 'muted' }}">{{ 'Active' if w.active else 'Disabled' }}</span></td><td class="right"><a class="text-link" href="{{ url_for('workers.edit', worker_id=w.id) }}">Edit</a><form class="inline" method="post" action="{{ url_for('workers.delete', worker_id=w.id) }}" onsubmit="return confirm('Permanently delete this worker account?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="text-link danger-link" type="submit">Delete</button></form></td></tr>{% else %}<tr><td colspan="4" class="empty">No workers registered yet.</td></tr>{% endfor %}</tbody></table></div></section>
+</div>{% endblock %}

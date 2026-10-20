@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "FarmOS \u2014 The operating system for your farm",
   "short_name": "FarmOS",
@@ -16,3 +17,6 @@
     }
   ]
 }
+=======
+{"name":"Intercity Dairy Farm","short_name":"Intercity Dairy","description":"Intercity Dairy Farm management and production monitoring.","start_url":"/","display":"standalone","background_color":"#f6f7f3","theme_color":"#1688bd","orientation":"portrait-primary","icons":[{"src":"/static/icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+>>>>>>> 1c174ce8dd3bd45f1ee03ccaaea6c57fe2fda01a
