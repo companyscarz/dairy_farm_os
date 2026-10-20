@@ -13,17 +13,18 @@ A production-oriented, mobile-first dairy farm management system built with **Fl
 
 ## First run
 
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env` if your environment provides that example; otherwise set the variables directly in your environment.
 2. Set a strong `SECRET_KEY`.
-3. Set `APP_NAME=Intercity Dairy Farm` and `DATABASE_URL`.
-4. Install dependencies and start with `python run.py`.
-5. Open `http://127.0.0.1:8080` and create the first administrator and farm.
+3. Set `APP_NAME=Intercity Dairy Farm` and a PostgreSQL `DATABASE_URL`.
+4. Install dependencies with `python -m pip install -r requirements.txt`.
+5. Start with `python run.py`.
+6. Open `http://127.0.0.1:7070` and create the first administrator and farm.
 
 The app initializes its PostgreSQL schema automatically and redirects to `/setup` until an owner account exists. There is no default password.
 
 ## Production deployment
 
-Use HTTPS behind a TLS reverse proxy, set `SESSION_COOKIE_SECURE=true`, configure a unique `SECRET_KEY`, and do not expose PostgreSQL publicly.
+Use HTTPS behind a TLS reverse proxy, set `SESSION_COOKIE_SECURE=true`, configure a unique `SECRET_KEY`, and do not expose PostgreSQL publicly. Configure Dokploy's exposed container port to match the start command (7070 for the supplied Nixpacks command).
 
 ## Testing
 
