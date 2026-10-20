@@ -20,6 +20,7 @@
         {% for endpoint,label,icon in [('dashboard.dashboard','Dashboard','⌂'),('animals.index','Animals','🐄'),('milk.index','Production','🥛'),('inventory.index','Inventory','▣'),('sales.index','Sales','↗'),('expenses.index','Expenses','₣'),('reports.index','Reports','◒'),('settings.settings_page','Settings','⚙')] %}
           <a class="nav-item {% if active == ('production' if endpoint == 'milk.index' else endpoint.split('.')[0]) %}active{% endif %}" href="{{ url_for(endpoint) }}"><span>{{ icon }}</span><span>{{ label }}</span></a>
         {% endfor %}
+        {% if current_user.role in ['owner', 'manager'] %}<a class="nav-item {% if active == 'workers' %}active{% endif %}" href="{{ url_for('workers.index') }}"><span>👥</span><span>Workers</span></a>{% endif %}
       </nav>
       <div class="sidebar-bottom"><div class="farm-mini">{{ current_user.farm_name }}</div><div class="user-mini">{{ current_user.name }} · {{ current_user.role|title }}</div></div>
     </aside>
