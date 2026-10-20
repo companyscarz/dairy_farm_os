@@ -7,7 +7,7 @@ load_dotenv()
 
 @dataclass(frozen=True)
 class Settings:
-    app_name: str = os.getenv("APP_NAME", "FarmOS")
+    app_name: str = os.getenv("APP_NAME", "Intercity Dairy Farm")
     database_url: str = os.getenv("DATABASE_URL")
     secret_key: str = os.getenv("SECRET_KEY", "")
     host: str = os.getenv("HOST", "0.0.0.0")
