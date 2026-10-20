@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..auth import login_required, roles_required, get_current_user
+from ..auth import login_required, roles_required, get_current_user, module_required
 from ..database import fetch_all, fetch_one, execute, execute_returning
 
 bp = Blueprint("animals", __name__, url_prefix="/animals")
 
 @bp.get("/")
 @login_required
+@module_required("dairy")
 def index():
     farm_id = get_current_user()["farm_id"]
     animals = fetch_all("SELECT * FROM animals WHERE farm_id=%s ORDER BY tag", (farm_id,))
@@ -13,6 +14,7 @@ def index():
 
 @bp.route("/new", methods=["GET", "POST"])
 @login_required
+@module_required("dairy")
 def create():
     farm_id = get_current_user()["farm_id"]
     if request.method == "POST":
@@ -34,6 +36,7 @@ def create():
 
 @bp.route("/<int:animal_id>/edit", methods=["GET", "POST"])
 @login_required
+@module_required("dairy")
 def edit(animal_id):
     farm_id = get_current_user()["farm_id"]
     animal = fetch_one("SELECT * FROM animals WHERE id=%s AND farm_id=%s", (animal_id, farm_id))
@@ -52,6 +55,7 @@ def edit(animal_id):
 
 @bp.post("/<int:animal_id>/delete")
 @roles_required("owner", "manager")
+@module_required("dairy")
 def delete(animal_id):
     farm_id = get_current_user()["farm_id"]
     execute("DELETE FROM animals WHERE id=%s AND farm_id=%s", (animal_id, farm_id))

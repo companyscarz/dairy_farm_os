@@ -1,24 +1,21 @@
 from pathlib import Path
-
-from .db import execute_script, fetch_all, execute
+from .db import get_db
 
 BASE_DIR = Path(__file__).resolve().parent
 MIGRATIONS_DIR = BASE_DIR / "migrations"
 
 
 def initialize_database() -> None:
-    with open(MIGRATIONS_DIR / "001_initial.sql", "r", encoding="utf-8") as f:
-        script = f.read()
-    from .db import get_db
-    with get_db() as db:
-        db.execute(script)
-        db.commit()
-
+    """Apply SQL migrations safely when multiple Gunicorn workers start together."""
     migrations = sorted(MIGRATIONS_DIR.glob("*.sql"))
-    for migration in migrations[1:]:
-        name = migration.name
-        existing = fetch_all("SELECT name FROM schema_migrations WHERE name = %s", (name,))
-        if existing:
-            continue
-        execute_script(migration)
-        execute("INSERT INTO schema_migrations (name) VALUES (%s)", (name,))
+    with get_db() as db:
+        db.execute("SELECT pg_advisory_xact_lock(81423917)")
+        for migration in migrations:
+            name = migration.name
+            if name != "001_initial.sql":
+                exists = db.execute("SELECT 1 FROM schema_migrations WHERE name=%s", (name,)).fetchone()
+                if exists:
+                    continue
+            db.execute(migration.read_text(encoding="utf-8"))
+            db.execute("INSERT INTO schema_migrations(name) VALUES(%s) ON CONFLICT(name) DO NOTHING", (name,))
+        db.commit()

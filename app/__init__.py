@@ -31,8 +31,13 @@ def create_app():
 
     @app.context_processor
     def inject_globals():
-        from .auth import get_current_user
-        return {"current_user": get_current_user()}
+        from .auth import get_current_user, get_user_farms, get_farm_modules
+        user = get_current_user()
+        return {
+            "current_user": user,
+            "user_farms": get_user_farms(user["id"]) if user else [],
+            "farm_modules": get_farm_modules(user["farm_id"]) if user else set(),
+        }
 
     @app.after_request
     def security_headers(response):
@@ -68,6 +73,7 @@ def create_app():
     from .expenses.routes import bp as expenses_bp
     from .reports.routes import bp as reports_bp
     from .settings.routes import bp as settings_bp
+    from .crops.routes import bp as crops_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -78,6 +84,7 @@ def create_app():
     app.register_blueprint(expenses_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(crops_bp)
 
     @app.get("/healthz")
     def healthz():

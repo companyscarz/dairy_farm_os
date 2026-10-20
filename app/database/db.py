@@ -1,11 +1,10 @@
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
-
+import atexit
 import psycopg
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
-
 from ..config import settings
 
 _pool: ConnectionPool | None = None
@@ -13,12 +12,16 @@ _pool: ConnectionPool | None = None
 
 def init_pool() -> None:
     global _pool
-    if _pool is None:
+    if _pool is None or _pool.closed:
         _pool = ConnectionPool(
             conninfo=settings.database_url,
             min_size=settings.db_min_size,
             max_size=settings.db_max_size,
             kwargs={"row_factory": dict_row},
+            check=ConnectionPool.check_connection,
+            max_lifetime=1800,
+            max_idle=300,
+            timeout=15,
             open=True,
         )
 
@@ -30,9 +33,12 @@ def close_pool() -> None:
         _pool = None
 
 
+atexit.register(close_pool)
+
+
 @contextmanager
 def get_db() -> Iterator[psycopg.Connection]:
-    if _pool is None:
+    if _pool is None or _pool.closed:
         init_pool()
     assert _pool is not None
     with _pool.connection() as conn:

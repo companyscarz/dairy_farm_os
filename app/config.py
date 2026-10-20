@@ -8,7 +8,7 @@ load_dotenv()
 @dataclass(frozen=True)
 class Settings:
     app_name: str = os.getenv("APP_NAME", "FarmOS")
-    database_url: str = os.getenv("DATABASE_URL")
+    database_url: str = os.getenv("DATABASE_URL", "postgresql://farmos:farmos@localhost:5432/farmos")
     secret_key: str = os.getenv("SECRET_KEY", "")
     host: str = os.getenv("HOST", "0.0.0.0")
     port: int = int(os.getenv("PORT", "7070"))

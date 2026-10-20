@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..auth import login_required, get_current_user
+from ..auth import login_required, get_current_user, module_required
 from ..database import fetch_all, execute
 
 bp = Blueprint("milk", __name__, url_prefix="/production")
 
 @bp.get("/")
 @login_required
+@module_required("dairy")
 def index():
     farm_id = get_current_user()["farm_id"]
     records = fetch_all("SELECT * FROM milk_production WHERE farm_id=%s ORDER BY production_date DESC, id DESC", (farm_id,))
@@ -13,6 +14,7 @@ def index():
 
 @bp.route("/new", methods=["GET", "POST"])
 @login_required
+@module_required("dairy")
 def create():
     farm_id = get_current_user()["farm_id"]
     if request.method == "POST":

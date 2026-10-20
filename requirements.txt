@@ -1,5 +1,5 @@
-Flask
-psycopg[binary,pool]
-python-dotenv
-Gunicorn
-pytest
+Flask>=3.1,<4
+psycopg[binary,pool]>=3.2,<4
+python-dotenv>=1.0,<2
+Gunicorn>=23,<24
+pytest>=8,<9

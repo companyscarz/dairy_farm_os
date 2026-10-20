@@ -1,21 +1,33 @@
-# FarmOS — Dairy Farm Management PWA
+# FarmOS — The operating system for your farm
 
-A production-oriented, mobile-first dairy farm management system built with **Flask + Jinja2 + PostgreSQL + vanilla HTML/CSS/JavaScript + Apache ECharts**.
+FarmOS is a mobile-first farm management PWA built for different kinds of farmers instead of assuming every farm is dairy.
 
-## Architecture
+## Stack
 
-- Flask application factory
-- PostgreSQL via `psycopg` / `psycopg_pool`
-- Plain SQL migrations in `app/database/migrations/`
-- No SQLAlchemy
-- No Flask-WTF
-- No NiceGUI
-- Native HTML forms and server-rendered Jinja templates
-- Apache ECharts receives JSON data directly from Flask templates
-- First-run administrator creation; no seed script and no default password
-- Responsive PWA shell with service worker and manifest
-- Gunicorn production server
-- Docker Compose PostgreSQL deployment
+- Flask + Jinja2
+- PostgreSQL only
+- psycopg / psycopg_pool
+- Vanilla HTML/CSS/JavaScript
+- Apache ECharts
+- Explicit SQL migrations
+- Flask sessions + custom CSRF protection
+- Gunicorn + Docker Compose
+- PWA manifest + service worker
+
+No SQLAlchemy, Flask-WTF, NiceGUI, SQLite fallback, or seed script.
+
+## Farm model
+
+A FarmOS account can belong to multiple farms. Each farm has its own:
+
+- farm type: dairy, crop, poultry, pig, fish/aquaculture, mixed, or other
+- users and per-farm roles
+- enabled operational modules
+- farm-scoped records and reports
+
+Core modules are shared across farm types: dashboard, inventory, sales, expenses, reports and settings.
+
+Specialized modules currently include the dairy workspace and an initial crop workspace. The architecture is ready for poultry, pigs and aquaculture modules to be added without changing the core data model.
 
 ## First run
 
@@ -38,54 +50,33 @@ python run.py
 ```
 
 7. Open `http://127.0.0.1:8080`.
-8. You will be redirected to `/setup` if no owner exists.
-9. Create the first administrator and farm.
-10. Configure the farm in Settings.
+8. FarmOS opens `/setup` only when no owner exists.
+9. Create the first farm and administrator, including the farm type.
 
-## Docker
+## Multi-farm workflow
 
-Create `.env` with at least:
+Owners can use **Settings → My farms** to create additional farms. A user can belong to more than one farm and can have a different role on each farm.
 
-```env
-POSTGRES_DB=farmos
-POSTGRES_USER=farmos
-POSTGRES_PASSWORD=use-a-long-random-password
-SECRET_KEY=use-a-long-random-application-secret
-APP_PORT=8080
-SESSION_COOKIE_SECURE=false
-```
+Owners can use **Settings → Farm users** to add accounts, assign roles, and activate/deactivate a membership for the current farm.
 
-Then:
+## Database migrations
 
-```bash
-docker compose up --build -d
-```
+Migrations live in `app/database/migrations/` and are applied automatically at startup. Migration execution uses a PostgreSQL advisory lock so multiple Gunicorn workers do not race while changing the schema.
 
-For HTTPS behind NGINX, set `SESSION_COOKIE_SECURE=true`.
+Current migrations:
 
-## Database
+- `001_initial.sql` — core farm management schema
+- `002_farm_types_multi_user.sql` — farm types, farm modules, multi-farm memberships, crop foundation
 
-The application uses explicit SQL. The database is initialized automatically when Flask starts.
-
-Initial schema:
-
-`app/database/migrations/001_initial.sql`
-
-Future schema changes should be added as new numbered migration files, for example:
-
-`002_add_animal_health.sql`
-
-The application records applied migration names in `schema_migrations`.
-
-## Production deployment
+## Production
 
 Put NGINX or another TLS reverse proxy in front of Gunicorn. Do not expose PostgreSQL publicly. Use a unique database password and application secret. Set `DEBUG=false` and `SESSION_COOKIE_SECURE=true` when HTTPS is active.
 
 ## Testing
 
 ```bash
+python -m compileall -q app run.py wsgi.py
 pytest -q
 ```
 
-The test suite includes application-level checks that do not require SQLAlchemy or NiceGUI.
-# dairy_farm_os
+The repository does not contain a seed script or default credentials.
