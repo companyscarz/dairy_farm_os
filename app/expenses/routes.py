@@ -1,7 +1,7 @@
 import math
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..auth import login_required, get_current_user
+from ..auth import login_required, roles_required, get_current_user
 from ..database import fetch_all, execute
 
 bp = Blueprint("expenses", __name__, url_prefix="/expenses")
@@ -39,3 +39,12 @@ def create():
         except Exception:
             flash("Could not save the expense.", "error")
     return render_template("expenses/form.html", active="expenses")
+
+@bp.post("/<int:record_id>/delete")
+@roles_required("owner", "manager")
+def delete(record_id):
+    farm_id = get_current_user()["farm_id"]
+    execute("DELETE FROM expenses WHERE id=%s AND farm_id=%s", (record_id, farm_id))
+    flash("Expense record deleted.", "success")
+    return redirect(url_for("expenses.index"))
+
