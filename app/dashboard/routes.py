@@ -17,7 +17,9 @@ def dashboard():
         farm_timezone = ZoneInfo(user.get("timezone") or "Africa/Kampala")
     except (ZoneInfoNotFoundError, ValueError):
         farm_timezone = ZoneInfo("Africa/Kampala")
-    today = datetime.now(farm_timezone).date()
+    now = datetime.now(farm_timezone)
+    today = now.date()
+    greeting = "Good morning" if now.hour < 12 else ("Good afternoon" if now.hour < 17 else "Good evening")
     month_start = today.replace(day=1)
     start = today - timedelta(days=13)
 
@@ -49,7 +51,7 @@ def dashboard():
         ORDER BY expense_date DESC, id DESC LIMIT 5
     """, (farm_id,))
 
-    return render_template("dashboard/index.html", active="dashboard", data={
+    return render_template("dashboard/index.html", active="dashboard", greeting=greeting, data={
         "animals": animals,
         "milk_today": float(milk_today),
         "revenue": float(revenue),
