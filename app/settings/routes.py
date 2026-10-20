@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..auth import login_required, roles_required, get_current_user
@@ -13,15 +15,31 @@ def settings_page():
     farm = fetch_one("SELECT * FROM farms WHERE id=%s", (user["farm_id"],))
     if request.method == "POST":
         name = request.form.get("name", "").strip()
+        currency = request.form.get("currency", "UGX").strip().upper()
+        timezone = request.form.get("timezone", "Africa/Kampala").strip()
+        try:
+            ZoneInfo(timezone)
+            valid_timezone = True
+        except (ZoneInfoNotFoundError, ValueError):
+            valid_timezone = False
+
         if not name:
             flash("Farm name is required.", "error")
+        elif currency not in {"UGX", "USD"}:
+            flash("Choose a supported currency.", "error")
+        elif not valid_timezone:
+            flash("Enter a valid IANA timezone, such as Africa/Kampala.", "error")
         else:
-            execute("""UPDATE farms SET name=%s,location=%s,phone=%s,email=%s,currency=%s,timezone=%s,updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
-                    (name, request.form.get("location", "").strip() or None,
-                     request.form.get("phone", "").strip() or None,
-                     request.form.get("email", "").strip() or None,
-                     request.form.get("currency", "UGX"),
-                     request.form.get("timezone", "Africa/Kampala"), user["farm_id"]))
+            execute(
+                """UPDATE farms
+                   SET name=%s,location=%s,phone=%s,email=%s,currency=%s,timezone=%s,
+                       updated_at=CURRENT_TIMESTAMP
+                   WHERE id=%s""",
+                (name, request.form.get("location", "").strip() or None,
+                 request.form.get("phone", "").strip() or None,
+                 request.form.get("email", "").strip() or None,
+                 currency, timezone, user["farm_id"]),
+            )
             flash("Farm settings updated.", "success")
         return redirect(url_for("settings.settings_page"))
     return render_template("settings/index.html", active="settings", farm=farm, user=user)
@@ -34,8 +52,8 @@ def update_profile():
     name = request.form.get("name", "").strip()
     email = request.form.get("email", "").strip().lower()
     current_password = request.form.get("current_password", "")
-    if not name or not email:
-        flash("Name and email are required.", "error")
+    if not name or not email or "@" not in email or email.startswith("@") or email.endswith("@"):
+        flash("Enter a valid name and email address.", "error")
         return redirect(url_for("settings.settings_page"))
     row = fetch_one("SELECT password_hash FROM users WHERE id=%s", (user["id"],))
     if not row or not check_password_hash(row["password_hash"], current_password):
