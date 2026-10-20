@@ -1,4 +1,4 @@
-const CACHE = 'intercity-dairy-static-v5';
+const CACHE = 'intercity-dairy-static-v6';
 const SHELL = [
   '/manifest.json',
   '/static/css/app.css',
