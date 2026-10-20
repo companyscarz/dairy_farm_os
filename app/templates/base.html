@@ -15,7 +15,7 @@
 {% if current_user %}
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><img class="brand-logo" src="{{ url_for('static', filename='icons/intercity-dairy-farm.jpg') }}" alt="Intercity Dairy Farm logo"><div><div class="brand-name">Intercity Dairy Farm</div><div class="brand-sub">Farm management</div></div></div>
+      <div class="brand"><img class="brand-logo" src="{{ url_for('static', filename='icons/intercity-dairy-farm.svg') }}" alt="Intercity Dairy Farm logo"><div><div class="brand-name">Intercity Dairy Farm</div><div class="brand-sub">Farm management</div></div></div>
       <nav>
         {% for endpoint,label,icon in [('dashboard.dashboard','Dashboard','⌂'),('animals.index','Animals','🐄'),('milk.index','Production','🥛'),('inventory.index','Inventory','▣'),('sales.index','Sales','↗'),('expenses.index','Expenses','₣'),('reports.index','Reports','◒'),('settings.settings_page','Settings','⚙')] %}
           <a class="nav-item {% if active == endpoint.split('.')[0] %}active{% endif %}" href="{{ url_for(endpoint) }}"><span>{{ icon }}</span><span>{{ label }}</span></a>
