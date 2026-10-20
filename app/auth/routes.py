@@ -39,7 +39,7 @@ def setup():
                     request.form.get("phone", "").strip(), request.form.get("farm_email", "").strip()
                 )
                 login_user(user)
-                flash("Administrator account created. Welcome to FarmOS.", "success")
+                flash("Administrator account created. Welcome to Intercity Dairy Farm.", "success")
                 return redirect(url_for("settings.settings_page"))
             except Exception as exc:
                 flash("Could not create the administrator. Check the details and try again.", "error")
