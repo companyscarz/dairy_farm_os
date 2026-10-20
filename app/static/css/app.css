@@ -40,3 +40,5 @@
 .install-action{white-space:nowrap;flex-shrink:0}
 .install-close{position:absolute;right:10px;top:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer}
 @media(max-width:560px){.install-prompt{align-items:flex-start;flex-wrap:wrap;bottom:12px}.install-prompt-copy{padding-right:4px}.install-action{margin-left:56px}.topbar-actions{gap:8px}}
+
+.guest-theme-toggle{position:fixed;top:16px;right:16px;z-index:110}
