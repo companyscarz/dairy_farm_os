@@ -1,0 +1,27 @@
+name: Test Dairy Farm OS
+
+on:
+  push:
+    branches: [pre-main, main]
+  pull_request:
+    branches: [pre-main, main]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run tests
+        env:
+          SECRET_KEY: test-secret-key-1234567890
+          DATABASE_URL: postgresql://invalid:invalid@localhost:59999/invalid
+          DEBUG: "true"
+        run: pytest -q
