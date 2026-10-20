@@ -10,9 +10,10 @@ def test_config_requires_postgresql():
     assert settings.database_url.startswith("postgresql")
 
 
-def test_security_token_roundtrip(monkeypatch):
+def test_security_token_roundtrip():
     from flask import Flask, session
     from app.security import csrf_token
+
     app = Flask(__name__)
     app.secret_key = "test-secret"
     with app.test_request_context("/"):
@@ -20,3 +21,21 @@ def test_security_token_roundtrip(monkeypatch):
         second = csrf_token()
         assert first == second
         assert session["csrf_token"] == first
+
+
+def test_login_redirect_accepts_local_path():
+    from app.auth.routes import _safe_next_url
+
+    assert _safe_next_url("/reports/?range=month") == "/reports/?range=month"
+
+
+def test_login_redirect_rejects_external_and_protocol_relative_urls():
+    from flask import Flask
+    from app.auth.routes import _safe_next_url
+
+    app = Flask(__name__)
+    app.add_url_rule("/", endpoint="dashboard.dashboard", view_func=lambda: "")
+    with app.test_request_context("/login"):
+        assert _safe_next_url("https://evil.example") == "/"
+        assert _safe_next_url("//evil.example/path") == "/"
+        assert _safe_next_url("/\\\\evil.example") == "/"
