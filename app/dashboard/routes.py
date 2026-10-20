@@ -1,4 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from flask import Blueprint, render_template
 from ..auth import login_required, get_current_user
 from ..database import fetch_one, fetch_all
@@ -9,8 +11,13 @@ bp = Blueprint("dashboard", __name__)
 @bp.get("/")
 @login_required
 def dashboard():
-    farm_id = get_current_user()["farm_id"]
-    today = date.today()
+    user = get_current_user()
+    farm_id = user["farm_id"]
+    try:
+        farm_timezone = ZoneInfo(user.get("timezone") or "Africa/Kampala")
+    except (ZoneInfoNotFoundError, ValueError):
+        farm_timezone = ZoneInfo("Africa/Kampala")
+    today = datetime.now(farm_timezone).date()
     month_start = today.replace(day=1)
     start = today - timedelta(days=13)
 
