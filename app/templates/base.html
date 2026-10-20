@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1688bd">
   <meta name="description" content="Intercity Dairy Farm management system">
   <link rel="manifest" href="{{ url_for('manifest') }}">
-  <link rel="icon" href="{{ url_for('static', filename='icons/icon.svg') }}">
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='icons/icon.jfif') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   {% if current_user %}<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js" defer></script>{% endif %}
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
@@ -15,7 +15,7 @@
 {% if current_user %}
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><img class="brand-logo" src="{{ url_for('static', filename='icons/intercity-dairy-farm.svg') }}" alt="Intercity Dairy Farm logo"><div><div class="brand-name">Intercity Dairy Farm</div><div class="brand-sub">Farm management</div></div></div>
+      <div class="brand"><img class="brand-logo" src="{{ url_for('static', filename='icons/intercity-dairy-farm.jfif') }}" alt="Intercity Dairy Farm logo"><div><div class="brand-name">Intercity Dairy Farm</div><div class="brand-sub">Farm management</div></div></div>
       <nav>
         {% for endpoint,label,icon in [('dashboard.dashboard','Dashboard','⌂'),('animals.index','Animals','🐄'),('milk.index','Production','🥛'),('inventory.index','Inventory','▣'),('sales.index','Sales','↗'),('expenses.index','Expenses','₣'),('reports.index','Reports','◒'),('settings.settings_page','Settings','⚙')] %}
           <a class="nav-item {% if active == ('production' if endpoint == 'milk.index' else endpoint.split('.')[0]) %}active{% endif %}" href="{{ url_for(endpoint) }}"><span>{{ icon }}</span><span>{{ label }}</span></a>
