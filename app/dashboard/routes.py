@@ -16,8 +16,14 @@ def dashboard():
 
     animals = fetch_one("SELECT COUNT(*) AS n FROM animals WHERE farm_id=%s AND status='active'", (farm_id,))["n"]
     milk_today = fetch_one("SELECT COALESCE(SUM(litres),0) AS v FROM milk_production WHERE farm_id=%s AND production_date=%s", (farm_id, today))["v"]
-    revenue = fetch_one("SELECT COALESCE(SUM(total),0) AS v FROM sales WHERE farm_id=%s AND sale_date >= %s", (farm_id, month_start))["v"]
-    expenses = fetch_one("SELECT COALESCE(SUM(amount),0) AS v FROM expenses WHERE farm_id=%s AND expense_date >= %s", (farm_id, month_start))["v"]
+    revenue = fetch_one(
+        "SELECT COALESCE(SUM(total),0) AS v FROM sales WHERE farm_id=%s AND sale_date BETWEEN %s AND %s",
+        (farm_id, month_start, today),
+    )["v"]
+    expenses = fetch_one(
+        "SELECT COALESCE(SUM(amount),0) AS v FROM expenses WHERE farm_id=%s AND expense_date BETWEEN %s AND %s",
+        (farm_id, month_start, today),
+    )["v"]
     low_stock = fetch_one("SELECT COUNT(*) AS n FROM inventory_items WHERE farm_id=%s AND quantity <= reorder_level", (farm_id,))["n"]
     milk_rows = fetch_all("""
         SELECT production_date, COALESCE(SUM(litres),0) AS litres
