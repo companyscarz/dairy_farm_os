@@ -46,7 +46,7 @@ def settings_page():
 
 
 @bp.post("/profile")
-@login_required
+@roles_required("owner", "manager")
 def update_profile():
     user = get_current_user()
     name = request.form.get("name", "").strip()
